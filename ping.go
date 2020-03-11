@@ -72,8 +72,20 @@ var (
 )
 
 // NewPinger returns a new Pinger struct pointer
-func NewPinger(addr string) (*Pinger, error) {
-	ipaddr, err := net.ResolveIPAddr("ip", addr)
+// addr is the address of target host, and network
+// is either "ip4" for IPv4, or "ip6" for IPv6. If
+// network is empty, either an IPv4 or IPv6 address
+// will be automatically selected.
+func NewPinger(addr, network string) (*Pinger, error) {
+	var ipaddr *net.IPAddr
+	var err error
+
+	if network == "" {
+		network = "ip"
+	}
+
+	ipaddr, err = net.ResolveIPAddr(network, addr)
+
 	if err != nil {
 		return nil, err
 	}
